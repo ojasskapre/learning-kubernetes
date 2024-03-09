@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-depl
+  labels:
+    app: result
+    tier: frontend
+spec:
+  replicas: 3
+  # default strategy is rollingUpdate with maxSurge and maxUnavailable as 25%
+  selector:
+    matchLabels:
+      app: result
+      tier: frontend
+  template:
+    metadata:
+      name: result-depl-pods
+      labels:
+        app: result
+        tier: frontend
+    spec:
+      containers:
+      - name: result
+        image: okapre/sample-voting-result:m1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-service
+spec:
+  type: LoadBalancer
+  ports:
+  - nodePort: 30002
+    port: 80
+    targetPort: 80
+  selector:
+    app: result
+    tier: frontend

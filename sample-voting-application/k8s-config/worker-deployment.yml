@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-depl
+  labels:
+    app: worker
+    tier: backend
+spec:
+  replicas: 3
+  # default strategy is RollingUpdate with maxSurge and maxUnavailable as 25%
+  selector:
+    matchLabels:
+      app: worker
+      tier: backend
+  template:
+    metadata:
+      name: worker-depl-pods
+      labels:
+        app: worker
+        tier: backend
+    spec:
+      containers:
+      - name: worker
+        image: okapre/sample-voting-worker:m1

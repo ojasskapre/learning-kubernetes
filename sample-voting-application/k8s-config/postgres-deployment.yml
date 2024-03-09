@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-depl
+  labels:
+    app: postgres
+    tier: db
+spec:
+  replicas: 1 # keep it 1 as currently we do not have a common value
+  strategy:
+    type: Recreate # just for testing different strategy
+  selector:
+    matchLabels:
+      app: postgres
+      tier: db
+  template:
+    metadata:
+      name: postgres-depl-pods
+      labels:
+        app: postgres
+        tier: db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres
+    tier: db

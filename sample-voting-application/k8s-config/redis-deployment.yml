@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-depl
+  labels:
+    app: redis
+    tier: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      tier: db
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  template:
+    metadata:
+      name: redis-depl-pod
+      labels:
+        app: redis
+        tier: db
+    spec:  
+      containers:
+      - name: redis
+        image: redis:alpine
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    tier: db
